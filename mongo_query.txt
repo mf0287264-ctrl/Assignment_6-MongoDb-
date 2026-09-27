@@ -1,0 +1,395 @@
+1)
+use Assignment7[cite: 1]
+
+db.createCollection("books")[cite: 1]
+
+db.runCommand({
+  collMod: "books",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["title"],
+      properties: {
+        title: {
+          bsonType: "string",
+          minLength: 1
+        }
+      }
+    }
+  }
+})[cite: 1]
+
+/* Output:
+{ "ok": 1 }
+*/
+
+2)
+db.authors.insertOne({ name: "mohamed", nationality: "Egyptian" })[cite: 1]
+
+/* Output:
+{
+  acknowledged: true,
+  insertedId: ObjectId('6ab8184e188fba873fa669dd')
+}
+*/
+
+3)
+db.createCollection("logs", { capped: true, size: 100000, max: 1000 })[cite: 1]
+
+/* Output:
+{ ok: 1 }
+*/
+
+4)
+db.books.createIndex({ title: 1 })[cite: 1]
+
+/* Output:
+title_1
+*/
+
+5)
+db.books.insertOne({ title: "Book1", author: "Ali", year: 1972, genres: ["fantasy", "adventure"] })[cite: 1]
+
+/* Output:
+{
+  acknowledged: true,
+  insertedId: ObjectId('6ab81b2a188fba873fa669de')
+}
+*/
+
+6)
+db.books.insertMany([
+  {
+    title: "Future",
+    author: "George Orwell",
+    year: 2020,
+    genres: ["Science Fiction"]
+  },
+  {
+    title: "To Kill a Mockingbird",
+    author: "Harper Lee",
+    year: 1960,
+    genres: ["Classic", "Fiction"]
+  },
+  {
+    title: "Brave New World",
+    author: "Aldous Huxley",
+    year: 2006,
+    genres: ["Dystopian", "Science Fiction"]
+  }
+])[cite: 1]
+
+/* Output:
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6ab81bd6188fba873fa669df'),
+    '1': ObjectId('6ab81bd6188fba873fa669e0'),
+    '2': ObjectId('6ab81bd6188fba873fa669e1')
+  }
+}
+*/
+
+7)
+db.books.updateOne({ title: "Future" }, { $set: { year: 2022 } })[cite: 1]
+
+/* Output:
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+*/
+
+9)
+db.books.findOne({ title: "Brave New World" })[cite: 1]
+
+/* Output:
+{
+  _id: ObjectId('6ab81bd6188fba873fa669e1'),
+  title: 'Brave New World',
+  author: 'Aldous Huxley',
+  year: 2006,
+  genres: [
+    'Dystopian',
+    'Science Fiction'
+  ]
+}
+*/
+
+10)
+db.books.find({
+  year: {
+    $gte: 1990,$lte: 2010
+  }
+})[cite: 1]
+
+/* Output:
+{
+  _id: ObjectId('6ab81bd6188fba873fa669e1'),
+  title: 'Brave New World',
+  author: 'Aldous Huxley',
+  year: 2006,
+  genres: [
+    'Dystopian',
+    'Science Fiction'
+  ]
+}
+*/
+
+11)
+db.books.find({
+  genres: "Science Fiction"
+})[cite: 1]
+
+/* Output:
+{
+  _id: ObjectId('6ab81bd6188fba873fa669e1'),
+  title: 'Brave New World',
+  author: 'Aldous Huxley',
+  year: 2006,
+  genres: [
+    'Dystopian',
+    'Science Fiction'
+  ]
+}
+{
+  _id: ObjectId('6ab81bd6188fba873fa669df'),
+  title: 'Future',
+  author: 'George Orwell',
+  year: 2022,
+  genres: [
+    'Science Fiction'
+  ]
+}
+*/
+
+12)
+db.books.find().sort({ year: -1 }).skip(2).limit(3)[cite: 1]
+
+/* Output:
+{
+  _id: ObjectId('6ab81b2a188fba873fa669de'),
+  title: 'Book1',
+  author: 'Ali',
+  year: 1972,
+  genres: [
+    'fantasy',
+    'adventure'
+  ]
+}
+{
+  _id: ObjectId('6ab81bd6188fba873fa669e0'),
+  title: 'To Kill a Mockingbird',
+  author: 'Harper Lee',
+  year: 1960,
+  genres: [
+    'Classic',
+    'Fiction'
+  ]
+}
+*/
+
+13)
+db.books.find({
+  year: {
+    $type: "int"
+  }
+})[cite: 1]
+
+/* Output:
+{
+  _id: ObjectId('6ab81bd6188fba873fa669e1'),
+  title: 'Brave New World',
+  author: 'Aldous Huxley',
+  year: 2006,
+  genres: [
+    'Dystopian',
+    'Science Fiction'
+  ]
+}
+{
+  _id: ObjectId('6ab81bd6188fba873fa669e0'),
+  title: 'To Kill a Mockingbird',
+  author: 'Harper Lee',
+  year: 1960,
+  genres: [
+    'Classic',
+    'Fiction'
+  ]
+}
+{
+  _id: ObjectId('6ab81bd6188fba873fa669df'),
+  title: 'Future',
+  author: 'George Orwell',
+  year: 2022,
+  genres: [
+    'Science Fiction'
+  ]
+}
+{
+  _id: ObjectId('6ab81b2a188fba873fa669de'),
+  title: 'Book1',
+  author: 'Ali',
+  year: 1972,
+  genres: [
+    'fantasy',
+    'adventure'
+  ]
+}
+*/
+
+14)
+db.books.find({
+  genres: {
+    $nin: ["Horror", "Science Fiction"]
+  }
+})[cite: 1]
+
+/* Output:
+{
+  _id: ObjectId('6ab81bd6188fba873fa669e0'),
+  title: 'To Kill a Mockingbird',
+  author: 'Harper Lee',
+  year: 1960,
+  genres: [
+    'Classic',
+    'Fiction'
+  ]
+}
+{
+  _id: ObjectId('6ab81b2a188fba873fa669de'),
+  title: 'Book1',
+  author: 'Ali',
+  year: 1972,
+  genres: [
+    'fantasy',
+    'adventure'
+  ]
+}
+*/
+
+15)
+db.books.deleteMany({
+  year: {
+    $lt: 2000
+  }
+})[cite: 1]
+
+/* Output:
+{
+  acknowledged: true,
+  deletedCount: 1
+}
+*/
+
+16)
+db.books.find({
+  year: {
+    $gt: 2000
+  }
+}).sort({
+  year: -1
+})[cite: 1]
+
+/* Output:
+{
+  _id: ObjectId('6ab827e1188fba873fa669e4'),
+  title: 'Future',
+  author: 'George Orwell',
+  year: 2022,
+  genres: [
+    'Science Fiction'
+  ]
+}
+{
+  _id: ObjectId('6ab827e1188fba873fa669e6'),
+  title: 'Brave New World',
+  author: 'Aldous Huxley',
+  year: 2006,
+  genres: [
+    'Dystopian',
+    'Science Fiction'
+  ]
+}
+*/
+
+17)
+db.books.find(
+  { year: { $gt: 2000 } },
+  { _id: 0, title: 1, author: 1, year: 1 }
+)[cite: 1]
+
+/* Output:
+{
+  title: 'Future',
+  author: 'George Orwell',
+  year: 2022
+}
+{
+  title: 'Brave New World',
+  author: 'Aldous Huxley',
+  year: 2006
+}
+*/
+
+18)
+db.books.aggregate([
+  { $unwind: "$genres" },
+  { $project: { _id: 0, title: 1, genres: 1 } }
+])[cite: 1]
+
+/* Output:
+{
+  title: 'Book1',
+  genres: 'Fantasy'
+}
+{
+  title: 'Book1',
+  genres: 'Adventure'
+}
+{
+  title: 'Future',
+  genres: 'Science Fiction'
+}
+{
+  title: 'Brave New World',
+  genres: 'Dystopian'
+}
+{
+  title: 'Brave New World',
+  genres: 'Science Fiction'
+}
+*/
+
+19)
+db.logs.aggregate([
+  {
+    $lookup: {
+      from: "books",
+      localField: "booksId",
+      foreignField: "_id",
+      as: "book_details"
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      action: 1,
+      book_details: {
+        title: 1,
+        author: 1,
+        year: 1
+      }
+    }
+  }
+])[cite: 1]
+
+/* Output:
+{
+  action: 'borrowed',
+  book_details: []
+}
+*/
