@@ -1,6 +1,5 @@
-import { db } from "../connection.js";
+import { db } from "../db.connection.js";
 
 const authorsModel = db.collection("authors");
-authorsModel.createIndex();
 
 export default authorsModel;
